@@ -1,0 +1,33 @@
+### Admin Login
+POST http://localhost:6000/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@blogapp.com",
+    "password": "adminblogapp"
+}
+
+### Logout
+GET  http://localhost:6000/auth/logout
+
+### Change Password
+PUT http://localhost:6000/auth/change-password
+Content-Type: application/json
+
+{
+    "currentPassword": "admin000",
+    "newPassword": "adminblogapp"
+}
+
+
+### Read All Users and Authors (email & id)
+
+
+### Block User or Author by ID
+PATCH http://localhost:6000/admin-api/activity
+Content-Type: application/json
+
+{
+    "email": "",
+    "isActive": false
+}

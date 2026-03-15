@@ -1,0 +1,71 @@
+### Author Login
+POST http://localhost:6000/auth/login
+Content-Type: application/json
+
+{
+    "email": "author2@gmail.com",
+    "password": "author234"
+}
+
+### Logout
+GET  http://localhost:6000/auth/logout
+
+### Change Password
+PUT http://localhost:6000/auth/change-password
+Content-Type: application/json
+
+{
+    "currentPassword": "user123",
+    "newPassword": "user234"
+}
+
+### Register Author
+POST http://localhost:6000/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "author",
+    "lastName":"2",
+    "email": "author2@gmail.com",
+    "role": "author", 
+    "password": "author234",
+    "profileImageUrl": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+}
+
+### Create Article
+POST http://localhost:6000/author-api/article
+Content-Type: application/json
+
+{
+    "author": "69b3ad91f0666ebf57d5759e",
+    "title": "My third Article",
+    "content": "This is the content of my third article.",
+    "category": "Introduction"
+}
+
+
+### Read Own Article
+GET http://localhost:6000/author-api/ownarticles
+
+
+### Update Article
+PUT http://localhost:6000/author-api/article/
+Content-Type: application/json
+
+{
+    "articleId": "69b3daeb28df2874e9e304c7",
+    "title": "My Updated u1 Article",
+    "content": "This is the updated content of my article.",
+    "category": "Updated Category"
+}
+
+
+### Soft Delete Article by Article ID
+PATCH http://localhost:6000/author-api/article/
+Content-Type: application/json
+
+{
+    "articleId": "69b3da7228df2874e9e304af",
+    "isArticleActive": false
+
+}
