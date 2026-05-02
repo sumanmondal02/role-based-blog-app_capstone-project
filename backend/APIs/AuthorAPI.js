@@ -5,8 +5,9 @@ import { verifyToken } from "../middlewares/verifyToken.js";
 export const authorApp = exp.Router();
 
 //write article (protected route)
-authorApp.post("/article", verifyToken("author"), async(req, res)=>{
-    //get articleobj from client 
+authorApp.post("/articles", verifyToken("author"), async(req, res, next)=>{
+    try{
+        //get articleobj from client 
     const articleObj = req.body;
     //get user from decoded token
     let userEmail=req.user.email
@@ -25,10 +26,13 @@ authorApp.post("/article", verifyToken("author"), async(req, res)=>{
     //save
     await articleDoc.save();
     res.status(201).json({message:"Article Published Succesfully"})
+    }catch(err){
+        next(err);
+    }
 })
 
 //read own articles
-authorApp.get("/ownarticles", verifyToken("author"), async(req,res)=>{
+authorApp.get("/articles", verifyToken("author"), async(req,res)=>{
     //read articles by author email
     const authorIdOfToken=req.user?.id;
     //
@@ -37,7 +41,7 @@ authorApp.get("/ownarticles", verifyToken("author"), async(req,res)=>{
 } )
 
 //edit article
-authorApp.put("/article", verifyToken("author"), async(req, res)=>{
+authorApp.put("/articles", verifyToken("author"), async(req, res)=>{
     //get author id from decoded token 
     const authorIdOfToken = req.user?.id;
     //get modified article from client
@@ -55,7 +59,7 @@ authorApp.put("/article", verifyToken("author"), async(req, res)=>{
 
 
 //delete article (soft delete)
-authorApp.patch("/article", verifyToken("author"), async(req, res)=>{
+authorApp.patch("/articles", verifyToken("author"), async(req, res)=>{
     //check articleId
     //get author id from decoded token 
     const authorIdOfToken = req.user?.id;

@@ -6,17 +6,23 @@ import {userApp} from "./APIs/UserAPI.js";
 import {authorApp} from "./APIs/AuthorAPI.js";
 import {adminApp} from "./APIs/AdminAPI.js";
 import {commonApp} from "./APIs/CommonAPI.js";
+import cors from "cors";
 
 config()
 
 //create expres app
 const app = exp();
 
+// CORS middleware
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 //cookie parser middleware
 app.use(cookieParser());
 //Body Parser Middleware
 app.use(exp.json());
-
 
 //path level middleware
 app.use("/user-api", userApp)
@@ -28,10 +34,10 @@ app.use("/auth", commonApp)
 //connect to database
 const connectDB = async()=>{
     try{
-        await connect(process.env.DB_URL);
+        await connect(process.env.DB_URL, {dbName: "blogDB"});
         console.log("Database Connected")
         //assign port
-        const port = process.env.PORT || 6000;
+        const port = process.env.PORT || 4120;
         app.listen(port,()=>console.log(`Server is running on port ${port}`));
     }catch(err){
         console.log("Error in Connection to Database", err)
@@ -79,6 +85,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "error occurred", error: "Server side error" });
 }); 
 
+export default app
 
 
 // //to handle errors

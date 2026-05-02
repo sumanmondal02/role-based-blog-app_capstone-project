@@ -3,8 +3,8 @@ POST http://localhost:6000/auth/login
 Content-Type: application/json
 
 {
-    "email": "admin@blogapp.com",
-    "password": "adminblogapp"
+    "email": "admin01@gmail.com",
+    "password": "admin1"
 }
 
 ### Logout
@@ -15,8 +15,8 @@ PUT http://localhost:6000/auth/change-password
 Content-Type: application/json
 
 {
-    "currentPassword": "admin000",
-    "newPassword": "adminblogapp"
+    "currentPassword": "admin01",
+    "newPassword": "admin1"
 }
 
 

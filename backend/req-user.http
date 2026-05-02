@@ -1,0 +1,55 @@
+### User Login
+POST http://localhost:6000/auth/login
+Content-Type: application/json
+
+{
+    "email": "sumanmondal1@gmail.com",
+    "password": "suman1"
+}
+
+### Logout
+GET  http://localhost:4120/auth/logout
+
+### Register User
+POST http://localhost:4120/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Suman",
+    "lastName":"Mondal",
+    "email": "sumanmondal1@gmail.com",
+    "role": "user", 
+    "password": "suman02",
+    "profileImageUrl": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+}
+
+
+### Change Password
+PUT http://localhost:4120/auth/change-password
+Content-Type: application/json
+
+{
+    "currentPassword": "suman02",
+    "newPassword": "suman1"
+}
+
+
+### Read All Articles of all authors
+GET http://localhost:4120/user-api/articles
+
+### Insert Comment 
+PUT http://localhost:4120/user-api/comment
+Content-Type: application/json
+
+{
+    "articleId": "69f65b43f677fd4acaf5d995",
+    "comment": "Testing2"
+}
+
+### Read All Comments
+GET http://localhost:4120/user-api/comment
+Content-Type: application/json
+
+{
+    "articleId": "69f65b43f677fd4acaf5d995"
+}

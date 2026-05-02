@@ -26,8 +26,8 @@ export const verifyToken= (...allowedRoles)=>{
             next();
         } catch (error) {
             return res.status(401).json({message:"Invalid Token"})
-        }
-}
+            }
+    }
 }
 
 // export const verifyToken=async(req, res, next)=>{

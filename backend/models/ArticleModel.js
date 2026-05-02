@@ -2,7 +2,7 @@ import {Schema, model, Types} from "mongoose"
 
 //create comment schema
 const commentSchema = new Schema({
-    commentedBy:{
+    user:{
         type: Types.ObjectId,
         ref: "user",
         required: [true, "User ID is required"]
@@ -11,13 +11,10 @@ const commentSchema = new Schema({
         type: String,
         required:[true, "Enter a Comment"]
     },
-    commentedAt:{
-        type: Date,
-        default: Date.now
-    }
 },{
     versionKey: false,
-    _id: false
+    _id: false,
+    timestamps: true
 })
 
 
@@ -42,7 +39,7 @@ const articleSchema = new Schema({
         required: [true, "Content is required"],
     },
     comments:[{
-        //{comment, commentedBy, commentedAt}
+        //{comment, user}
         type: commentSchema,
         default: []
     }],
