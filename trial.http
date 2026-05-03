@@ -1,0 +1,26 @@
+###
+POST https://blogapp-backend-g8pd.onrender.com/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "Suman",
+    "lastName":"Mondal",
+    "email": "sumanm@gmail.com",
+    "role": "user", 
+    "password": "sumanM"
+}
+
+###
+POST https://blogapp-backend-g8pd.onrender.com/auth/login
+Content-Type: application/json
+
+{
+    "email": "sumanmondal1@gmail.com",
+    "password": "suman1"
+}
+
+###
+GET https://blogapp-backend-g8pd.onrender.com/auth/logout
+
+###
+GET https://blogapp-backend-g8pd.onrender.com/user-api/articles

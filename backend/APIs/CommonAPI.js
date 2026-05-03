@@ -12,6 +12,8 @@ const {sign} = jwt;
 export const commonApp = exp.Router();
 config();
 
+// const isProd = process.env.NODE_ENV === "production";
+
 //Route for Register
 commonApp.post("/register", upload.single("profileImageUrl"), async (req, res, next) => {
     let cloudinaryResult;
@@ -65,45 +67,50 @@ commonApp.post("/register", upload.single("profileImageUrl"), async (req, res, n
 
 
 //Route for Login
-commonApp.post("/login", async(req, res)=>{
-    //get user email and password from the req body
-    const {email, password} = req.body;
-    //find user my email
-    const user = await UserModel.findOne({email:email});
-    
-    if(!user){
-        return res.status(404).json({message: "User not found, Register first"})
-    }
-    if (!user.isUserActive) {
-        return res.status(403).json({message: "Your account has been blocked by admin"});
-    }
-    else{
-        const isMatch = await compare(password, user.password);
-        if(!isMatch){
-            return res.status(401).json({message: "Invalid Credentials"})
+commonApp.post("/login", async(req, res, next)=>{
+    try{
+        //get user email and password from the req body
+        const {email, password} = req.body;
+        //find user my email
+        const user = await UserModel.findOne({email:email});
+        
+        if(!user){
+            return res.status(404).json({message: "User not found, Register first"})
         }
-        //generate JWT token and send response with token
-        const signedToken = sign({
-            id:user._id, 
-            email:email, 
-            role:user.role,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profileImageUrl: user.profileImageUrl
-        }, process.env.SECRET_KEY, {expiresIn:"1h"});
-        //set token to res header as httpOnly cookie
-        res.cookie("token", signedToken, {
-            httpOnly:true,
-            sameSite: isProd ? "none" : "lax",
-            secure:isProd
-        })
-// delete keyword only works on javascript object not on database document 
-        let userObj = user.toObject();
-        delete userObj.password;
-        res.status(200).json({message:`${user.firstName} ${user.lastName} Login Succesful`, user: userObj})
+        if (!user.isUserActive) {
+            return res.status(403).json({message: "Your account has been blocked by admin"});
+        }
+        else{
+            const isMatch = await compare(password, user.password);
+            if(!isMatch){
+                return res.status(401).json({message: "Invalid Credentials"})
+            }
+            //generate JWT token and send response with token
+            const signedToken = sign({
+                id:user._id, 
+                email:email, 
+                role:user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                profileImageUrl: user.profileImageUrl
+            }, process.env.SECRET_KEY, {expiresIn:"1h"});
+            //set token to res header as httpOnly cookie
+            res.cookie("token", signedToken, {
+                httpOnly:true,
+                sameSite: "none",
+                secure: true
+            })
+    // delete keyword only works on javascript object not on database document 
+            let userObj = user.toObject();
+            delete userObj.password;
+            res.status(200).json({message:`${user.firstName} ${user.lastName} Login Succesful`, user: userObj})
+        }
+        //verify the password by using verify() method of bcrypt
+        //if true generate JWT token and send response with token, else send error response
+    }catch(error){
+        console.error("Error in /login route:", error);
+        next(error);
     }
-    //verify the password by using verify() method of bcrypt
-    //if true generate JWT token and send response with token, else send error response
 })
 
 
@@ -111,8 +118,8 @@ commonApp.post("/login", async(req, res)=>{
 commonApp.get("/logout", (req, res)=>{
     res.clearCookie("token",{
         httpOnly: true,
-        sameSite: isProd ? "none" : "lax",
-        secure: isProd
+        sameSite: "none",
+        secure: true
     })
     res.status(200).json({message: "Logout Successful"})
 })
