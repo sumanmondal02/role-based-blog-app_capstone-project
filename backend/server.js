@@ -15,7 +15,7 @@ const app = exp();
 
 // CORS middleware
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "Replace_with_your_frontend_url", // e.g., "http://localhost:3000"
   credentials: true
 }));
 
@@ -38,7 +38,7 @@ const connectDB = async()=>{
         console.log("Database Connected")
         //assign port
         const port = process.env.PORT || 4120;
-        app.listen(port,()=>console.log(`Server is running on port ${port}`));
+        // app.listen(port,()=>console.log(`Server is running on port ${port}`));
     }catch(err){
         console.log("Error in Connection to Database", err)
     }
