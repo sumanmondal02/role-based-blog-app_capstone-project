@@ -13,7 +13,7 @@ import AdminUserList from './components/AdminUserList';
 import AdminUserComments from './components/AdminUserComments';
 import WriteArticle from './components/WriteArticle'
 import EditArticle from './components/EditArticle'
-import ArticleByID from "./components/ArticleByID";
+import ArticleById from "./components/ArticleById";
 // import UsersList from './components/UsersList'
 import { Toaster } from "react-hot-toast";
 import Unauthorized from "./components/Unauthorized";
@@ -84,7 +84,7 @@ function App() {
         },
         {
           path: "article/:id",
-          element: <ArticleByID />,
+          element: <ArticleById />,
         },
         {
           path: "edit-article",
