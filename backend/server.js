@@ -15,7 +15,7 @@ const app = exp();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://your-frontend.vercel.app"  // add after deploying frontend
+    "https://blogapp-beta-nine.vercel.app/"
 ];
 
 // CORS middleware
