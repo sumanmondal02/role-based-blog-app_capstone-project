@@ -37,48 +37,61 @@ authorApp.get("/articles", verifyToken("author"), async(req,res)=>{
     const authorIdOfToken=req.user?.id;
     //
     const articlesList = await ArticleModel.find({author:authorIdOfToken})
-    res.status(200).json({message:"Articles fetched successfully", articles: articlesList})
+    res.status(200).json({message:"Articles fetched successfully", payload: articlesList})
 } )
 
 //edit article
-authorApp.put("/articles", verifyToken("author"), async(req, res)=>{
-    //get author id from decoded token 
-    const authorIdOfToken = req.user?.id;
-    //get modified article from client
-    const {articleId, title, category, content}=req.body;
-    const modifiedArticle = await ArticleModel.findOneAndUpdate(
-        {_id:articleId, author:authorIdOfToken},
-        {$set:{title, category, content}},
-        {new:true})
-        //if either article id or author not correct
-        if(!modifiedArticle){
-            return res.status(404).json({message:"Not Authorized to edit the article"})
+authorApp.put("/articles", verifyToken("author"), async(req, res, next) => {
+    try {
+        const authorIdOfToken = req.user?.id;
+        const {articleId, title, category, content} = req.body;
+        
+        const modifiedArticle = await ArticleModel.findOneAndUpdate(
+            {_id: articleId, author: authorIdOfToken},
+            {$set: {title, category, content}},
+            {new: true}
+        ).populate("author", "firstName lastName profileImageUrl _id")
+         .populate("comments.user");
+        
+        if (!modifiedArticle) {
+            return res.status(404).json({message: "Not Authorized to edit the article"});
         }
-        res.status(200).json({message:"Article Updated Successfully", article: modifiedArticle})
-})
+        res.status(200).json({message: "Article Updated Successfully", payload: modifiedArticle});
+    } catch(err) {
+        next(err);
+    }
+});
 
 
 //delete article (soft delete)
-authorApp.patch("/articles", verifyToken("author"), async(req, res)=>{
-    //check articleId
-    //get author id from decoded token 
-    const authorIdOfToken = req.user?.id;
-    //get modified article from client
-    const {articleId, isArticleActive}=req.body;
-    //get article by id
-    const articleOfDB = await ArticleModel.findOne({_id:articleId, author:authorIdOfToken})
-    //check status
-    if(isArticleActive===articleOfDB.isArticleActive){
-        return res.status(200).json({message:"Article already in the same state"})
+authorApp.patch("/articles", verifyToken("author"), async(req, res, next) => {
+    try {
+        const authorIdOfToken = req.user?.id;
+        const {articleId, isArticleActive} = req.body;
+        
+        const articleOfDB = await ArticleModel.findOne({_id: articleId, author: authorIdOfToken});
+        
+        if (!articleOfDB) {
+            return res.status(404).json({message: "Article not found"});
+        }
+        if (isArticleActive === articleOfDB.isArticleActive) {
+            return res.status(200).json({message: "Article already in the same state"});
+        }
+        
+        articleOfDB.isArticleActive = isArticleActive;
+        await articleOfDB.save();
+        
+        // Re-fetch with populate ← key fix
+        const populated = await ArticleModel
+            .findById(articleOfDB._id)
+            .populate("author", "firstName lastName profileImageUrl _id")
+            .populate("comments.user");
+        
+        res.status(200).json({
+            message: "Article status updated successfully",
+            payload: populated  // ← now has populated author
+        });
+    } catch(err) {
+        next(err);
     }
-    articleOfDB.isArticleActive = isArticleActive
-    await articleOfDB.save()
-    //send response
-    res.status(200).json({message:"Article status updated successfully", article: articleOfDB})
-
-    // //get modified article from client
-    // const {articleId, isArticleActive}=req.body;
-    // {_id:articleId, author:authorIdOfToken},
-    //     {$set:{isArticleActive}},
-    //     {new:true})
-})
+});

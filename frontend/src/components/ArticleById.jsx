@@ -86,7 +86,7 @@ function ArticleById() {
 
       // console.log("SUCCESS:", res.data);
 
-      setArticle(res.data.article);
+      setArticle(res.data.payload);
 
       toast.success(res.data.message);
     } catch (err) {
@@ -154,16 +154,13 @@ function ArticleById() {
       <div className={articleContent}>{article.content}</div>
 
       {/* AUTHOR actions */}
-      {user?.role === "author" && (
-        <div className={articleActions}>
-          <button className={editBtn} onClick={() => editArticle(article)}>
-            Edit
-          </button>
-
-          <button className={deleteBtn} onClick={toggleArticleStatus}>
-            {article.isArticleActive ? "Delete" : "Restore"}
-          </button>
-        </div>
+      {user?.role === "author" && user?.id === article?.author?._id?.toString() && (
+          <div className={articleActions}>
+              <button className={editBtn} onClick={() => editArticle(article)}>Edit</button>
+              <button className={deleteBtn} onClick={toggleArticleStatus}>
+                  {article.isArticleActive ? "Delete" : "Restore"}
+              </button>
+          </div>
       )}
       {/* form to add comment if role is USER */}
       {/* USER actions */}

@@ -33,7 +33,11 @@ function Header() {
 
         {/* LOGO */}
         <NavLink to="/" className={navBrandClass}>
-          MyBlog
+          <img 
+              src="https://res.cloudinary.com/dlz6d3if1/image/upload/images_q5gwza.png"
+              alt="MyBlog"
+              className="h-10 w-auto object-contain"
+          />
         </NavLink>
 
         <ul className={navLinksClass}>

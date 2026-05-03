@@ -1,5 +1,5 @@
 ### Admin Login
-POST http://localhost:6000/auth/login
+POST http://localhost:4120/auth/login
 Content-Type: application/json
 
 {
@@ -7,11 +7,11 @@ Content-Type: application/json
     "password": "admin1"
 }
 
-### Logout
-GET  http://localhost:6000/auth/logout
+### Admin Logout
+GET http://localhost:4120/auth/logout
 
 ### Change Password
-PUT http://localhost:6000/auth/change-password
+PUT http://localhost:4120/auth/change-password
 Content-Type: application/json
 
 {
@@ -19,15 +19,52 @@ Content-Type: application/json
     "newPassword": "admin1"
 }
 
+### Get All Users and Authors
+GET http://localhost:4120/admin-api/users
 
-### Read All Users and Authors (email & id)
+### Get All Articles by a Specific Author
+GET http://localhost:4120/admin-api/authors/AUTHOR_ID_HERE/articles
 
-
-### Block User or Author by ID
-PATCH http://localhost:6000/admin-api/activity
+### Admin Delete Article
+PATCH http://localhost:4120/admin-api/articles/ARTICLE_ID_HERE
 Content-Type: application/json
 
 {
-    "email": "",
-    "isActive": false
+    "isArticleActive": false
+}
+
+### Admin Restore Article
+PATCH http://localhost:4120/admin-api/articles/ARTICLE_ID_HERE
+Content-Type: application/json
+
+{
+    "isArticleActive": true
+}
+
+### Block User or Author
+PATCH http://localhost:4120/admin-api/block-user/USER_ID_HERE
+Content-Type: application/json
+
+{
+    "isUserActive": false
+}
+
+### Unblock User or Author
+PATCH http://localhost:4120/admin-api/block-user/USER_ID_HERE
+Content-Type: application/json
+
+{
+    "isUserActive": true
+}
+
+### Get All Comments by a Specific User
+GET http://localhost:4120/admin-api/user/USER_ID_HERE/comments
+
+### Admin Delete a Comment
+DELETE http://localhost:4120/admin-api/comment
+Content-Type: application/json
+
+{
+    "articleId": "ARTICLE_ID_HERE",
+    "commentIndex": 0
 }

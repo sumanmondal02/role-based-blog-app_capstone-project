@@ -34,7 +34,7 @@ function AuthorArticles() {
         //read articles of current author
         let res = await axios.get(`${import.meta.env.VITE_URL}/author-api/articles`, { withCredentials: true });
         if (res.status === 200) {
-          setArticles(res.data.articles);
+          setArticles(res.data.payload);
         }
         //update articles state
       } catch (err) {

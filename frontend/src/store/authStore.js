@@ -15,11 +15,15 @@ export const useAuth = create((set) => ({
       let res = await axios.post(`${import.meta.env.VITE_URL}/auth/login`, userCred, { withCredentials: true });
       //update state
       if (res.status === 200) {
+        const userData = res.data?.user;
         set({
-          currentUser: res.data?.user,
-          loading: false,
-          isAuthenticated: true,
-          error: null,
+            currentUser: {
+                ...userData,
+                id: userData._id,  // ← normalize so both login and checkAuth have .id
+            },
+            loading: false,
+            isAuthenticated: true,
+            error: null,
         });
       }
     } catch (err) {

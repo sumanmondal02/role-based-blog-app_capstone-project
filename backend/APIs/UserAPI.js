@@ -11,11 +11,12 @@ userApp.get("/articles", verifyToken("user"), async(req, res)=>{
     res.status(200).json({message:"All Articles fetched successfully", payload:articleList})
 })
 
-userApp.get("/articles/:id", verifyToken("user"), async(req, res, next) => {
+userApp.get("/articles/:id", verifyToken("user", "author", "admin"), async(req, res, next) => {
     try {
         const article = await ArticleModel
-            .findOne({ _id: req.params.id, isArticleActive: true })
-            .populate("comments.user");  // ← always populated
+            .findOne({ _id: req.params.id /*isArticleActive: true */})
+            .populate("comments.user")
+            .populate("author", "firstName lastName profileImageUrl _id");  // ← add this
         
         if (!article) {
             return res.status(404).json({ message: "Article not found" });
@@ -48,7 +49,8 @@ userApp.put("/comment", verifyToken("user"), async(req,res,next)=>{
         await articleDocument.save();
         const populated = await ArticleModel
             .findById(articleDocument._id)
-            .populate("comments.user");
+            .populate("comments.user")
+            .populate("author", "firstName lastName profileImageUrl _id");
         res.status(200).json({message: "Commented Successfully", payload: populated});
     } catch(err) {
         next(err); // ← This sends error to your error handling middleware

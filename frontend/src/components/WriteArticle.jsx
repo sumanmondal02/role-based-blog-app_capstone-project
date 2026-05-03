@@ -19,7 +19,7 @@ import { useAuth } from "../store/authStore";
 function WriteArticle() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const currentUser = useAuth((state) => state.currentUser);
+  // const currentUser = useAuth((state) => state.currentUser);
 
   const {
     register,
@@ -30,26 +30,32 @@ function WriteArticle() {
 
   //save article
   const submitArticle = async (articleObj) => {
-    setLoading(true);
-
-    //add authorId to articleObj
-    articleObj.author = currentUser.id;
-    try {
-      //set loading true
-      setLoading(true);
-      //make POST req to save new article
-      let res = await axios.post(`${import.meta.env.VITE_URL}/author-api/articles`, articleObj, { withCredentials: true });
-      //navigate to AuthorArticles
-      if (res.status === 201) {
-        toast.success("Article published successfully")
-        navigate("../articles");
-        // navigate("./author-profile/articles");
+      // Read fresh from store at moment of submit ← fix
+      const currentUser = useAuth.getState().currentUser;
+      
+      if (!currentUser?.id) {
+          toast.error("Session not ready, please try again");
+          return;
       }
-    } catch (err) {
-       toast.error(err.response?.data?.error || "Failed to publish article");
-    } finally {
-      setLoading(false);
-    }
+
+      articleObj.author = currentUser.id;  // ← id not _id
+      
+      try {
+          setLoading(true);
+          let res = await axios.post(
+              `${import.meta.env.VITE_URL}/author-api/articles`,
+              articleObj,
+              { withCredentials: true }
+          );
+          if (res.status === 201) {
+              toast.success("Article published successfully");
+              navigate("../articles");
+          }
+      } catch (err) {
+          toast.error(err.response?.data?.error || "Failed to publish article");
+      } finally {
+          setLoading(false);
+      }
   };
 
   return (

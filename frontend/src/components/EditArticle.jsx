@@ -46,7 +46,7 @@ function EditArticle() {
       {withCredentials:true})
     //naviagte to articleById component
    if(res.status===200){
-    navigate(`/article/${article._id}`,{state:res.data.article})
+    navigate(`/article/${article._id}`,{state:res.data.payload})
    }
   };
   
