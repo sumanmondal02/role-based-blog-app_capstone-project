@@ -1,4 +1,4 @@
-import { createBrowserRouter,RouterProvider} from 'react-router'
+import { createBrowserRouter,RouterProvider} from 'react-router-dom'
 import RootLayoutComp from './components/RootLayoutComp'
 import HomeComp from './components/HomeComp'
 import RegisterComp from './components/RegisterComp'
