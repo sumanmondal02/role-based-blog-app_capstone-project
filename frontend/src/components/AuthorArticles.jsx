@@ -23,7 +23,7 @@ function AuthorArticles() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log("user in author profile", user);
+  // console.log("user in author profile", user);  
 
   useEffect(() => {
     if (!user) return;

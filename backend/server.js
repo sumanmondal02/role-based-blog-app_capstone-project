@@ -13,10 +13,21 @@ config()
 //create expres app
 const app = exp();
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://your-frontend.vercel.app"  // add after deploying frontend
+];
+
 // CORS middleware
 app.use(cors({
-  origin: true, // e.g., "http://localhost:3000"
-  credentials: true
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
 }));
 
 //cookie parser middleware
@@ -37,8 +48,8 @@ const connectDB = async()=>{
         await connect(process.env.DB_URL, {dbName: "blogDB"});
         console.log("Database Connected")
         //assign port
-        // const port = process.env.PORT || 4120;
-        // app.listen(port,()=>console.log(`Server is running on port ${port}`));
+        const port = process.env.PORT || 4120;
+        app.listen(port,()=>console.log(`Server is running on port ${port}`));
     }catch(err){
         console.log("Error in Connection to Database", err)
     }

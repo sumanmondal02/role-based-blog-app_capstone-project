@@ -70,12 +70,14 @@ commonApp.post("/login", async(req, res)=>{
     const {email, password} = req.body;
     //find user my email
     const user = await UserModel.findOne({email:email});
+    
+    if(!user){
+        return res.status(404).json({message: "User not found, Register first"})
+    }
     if (!user.isUserActive) {
         return res.status(403).json({message: "Your account has been blocked by admin"});
     }
-    if(!user){
-        return res.status(404).json({message: "User not found, Register first"})
-    }else{
+    else{
         const isMatch = await compare(password, user.password);
         if(!isMatch){
             return res.status(401).json({message: "Invalid Credentials"})
@@ -92,8 +94,8 @@ commonApp.post("/login", async(req, res)=>{
         //set token to res header as httpOnly cookie
         res.cookie("token", signedToken, {
             httpOnly:true,
-            sameSite:"lax",
-            secure:false
+            sameSite: isProd ? "none" : "lax",
+            secure:isProd
         })
 // delete keyword only works on javascript object not on database document 
         let userObj = user.toObject();
@@ -109,8 +111,8 @@ commonApp.post("/login", async(req, res)=>{
 commonApp.get("/logout", (req, res)=>{
     res.clearCookie("token",{
         httpOnly: true,
-        sameSite: "lax",
-        secure: false
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd
     })
     res.status(200).json({message: "Logout Successful"})
 })
