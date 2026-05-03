@@ -15,19 +15,25 @@ const app = exp();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://blogapp-beta-nine.vercel.app/"
+    "https://blogapp-beta-nine.vercel.app"
 ];
 
 // CORS middleware
 app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app")
+    ) {
+      return callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      return callback(null, false);
+    }
+  },
+  credentials: true
 }));
 
 //cookie parser middleware
