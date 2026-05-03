@@ -70,6 +70,9 @@ commonApp.post("/login", async(req, res)=>{
     const {email, password} = req.body;
     //find user my email
     const user = await UserModel.findOne({email:email});
+    if (!user.isUserActive) {
+        return res.status(403).json({message: "Your account has been blocked by admin"});
+    }
     if(!user){
         return res.status(404).json({message: "User not found, Register first"})
     }else{

@@ -4,12 +4,22 @@ import { ArticleModel } from "../models/ArticleModel.js";
 export const userApp = exp.Router();
 
 //Read all articles of all authors
-userApp.get("/articles", verifyToken("user"), async(req, res)=>{
-    //First fetch and read all articles
-    const articleList = await ArticleModel.find({isArticleActive:true})
-    //fetch all articles from database and send response
-    res.status(200).json({message:"All Articles fetched successfully", payload:articleList})
-})
+userApp.get("/articles", verifyToken("user"), async(req, res, next) => {
+    try {
+        const articleList = await ArticleModel
+            .find({isArticleActive: true})
+            .populate({
+                path: "author",
+                match: { isUserActive: true },
+                select: "firstName lastName profileImageUrl isUserActive"
+            });
+
+        // Filter out blocked authors
+        const filtered = articleList.filter(a => a.author !== null);
+        
+        res.status(200).json({message: "All Articles fetched successfully", payload: filtered});
+    } catch(err) { next(err); }
+});
 
 userApp.get("/articles/:id", verifyToken("user", "author", "admin"), async(req, res, next) => {
     try {
@@ -84,10 +94,18 @@ userApp.get("/public/articles", async(req, res, next) => {
     try {
         const articles = await ArticleModel
             .find({isArticleActive: true})
-            .populate("author", "firstName lastName profileImageUrl")
+            .populate({
+                path: "author",
+                match: { isUserActive: true },  // ← only active authors
+                select: "firstName lastName profileImageUrl isUserActive"
+            })
             .populate("comments.user", "email firstName")
             .sort({createdAt: -1});
-        res.status(200).json({message: "Articles fetched", payload: articles});
+
+        // Filter out articles where author is null (blocked author)
+        const filteredArticles = articles.filter(a => a.author !== null);
+        
+        res.status(200).json({message: "Articles fetched", payload: filteredArticles});
     } catch(err) { next(err); }
 });
 

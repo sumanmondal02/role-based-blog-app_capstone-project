@@ -7,6 +7,10 @@ import UserProfile from './components/UserProfile'
 import AuthorProfile from './components/AuthorProfile'
 import AuthorArticles from './components/AuthorArticles'
 import AdminProfile from './components/AdminProfile'
+import AdminAuthorList from './components/AdminAuthorList';
+import AdminAuthorArticles from './components/AdminAuthorArticles';
+import AdminUserList from './components/AdminUserList';
+import AdminUserComments from './components/AdminUserComments';
 import WriteArticle from './components/WriteArticle'
 import EditArticle from './components/EditArticle'
 import ArticleByID from "./components/ArticleByID";
@@ -64,6 +68,21 @@ function App() {
           ],
         },
         {
+          path: "admin-profile",
+          element: (
+              <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminProfile />
+              </ProtectedRoute>
+          ),
+          children: [
+            { index: true, element: <AdminAuthorList /> },
+            { path: "authors", element: <AdminAuthorList /> },
+            { path: "authors/:authorId/articles", element: <AdminAuthorArticles /> },
+            { path: "users", element: <AdminUserList /> },
+            { path: "users/:userId/comments", element: <AdminUserComments /> },
+          ],
+        },
+        {
           path: "article/:id",
           element: <ArticleByID />,
         },
@@ -71,14 +90,14 @@ function App() {
           path: "edit-article",
           element: <EditArticle />,
         },
-        {
-          path:"admin-profile",
-          element:(
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminProfile />
-          </ProtectedRoute>
-          ),
-        },
+        // {
+        //   path:"admin-profile",
+        //   element:(
+        //   <ProtectedRoute allowedRoles={["admin"]}>
+        //     <AdminProfile />
+        //   </ProtectedRoute>
+        //   ),
+        // },
         {
           path: "unauthorized",
           element: <Unauthorized />,
