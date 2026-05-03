@@ -15,7 +15,7 @@ const app = exp();
 
 // CORS middleware
 app.use(cors({
-  origin: "Replace_with_your_frontend_url", // e.g., "http://localhost:3000"
+  origin: true, // e.g., "http://localhost:3000"
   credentials: true
 }));
 
@@ -37,7 +37,7 @@ const connectDB = async()=>{
         await connect(process.env.DB_URL, {dbName: "blogDB"});
         console.log("Database Connected")
         //assign port
-        const port = process.env.PORT || 4120;
+        // const port = process.env.PORT || 4120;
         // app.listen(port,()=>console.log(`Server is running on port ${port}`));
     }catch(err){
         console.log("Error in Connection to Database", err)
@@ -85,7 +85,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "error occurred", error: "Server side error" });
 }); 
 
-export default app
+export default app;
 
 
 // //to handle errors
